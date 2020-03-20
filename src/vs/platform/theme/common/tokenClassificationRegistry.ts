@@ -21,7 +21,7 @@ export const typeAndModifierIdPattern = '^\\w+[-_\\w+]*$';
 export const fontStylePattern = '^(\\s*(-?italic|-?bold|-?underline))*\\s*$';
 
 export interface TokenSelector {
-	match(type: string, modifiers: string[]): number;
+	match(type: string, modifiers: string[], defaultLanguageId: string): number;
 	readonly selectorString: string;
 }
 

@@ -56,7 +56,7 @@ suite('TokenizationSupport2Adapter', () => {
 					throw new Error('Not implemented');
 				},
 
-				getTokenStyleMetadata: (type: string, modifiers: string[]): ITokenStyle | undefined => {
+				getTokenStyleMetadata: (type: string, modifiers: string[], defaultLanguage: string): ITokenStyle | undefined => {
 					return undefined;
 				},
 

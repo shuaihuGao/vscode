@@ -71,11 +71,11 @@ function assertTokenStyles(themeData: ColorThemeData, expected: { [qualifiedClas
 	for (let qualifiedClassifier in expected) {
 		const [type, ...modifiers] = qualifiedClassifier.split('.');
 
-		const tokenStyle = themeData.getTokenStyle(type, modifiers);
+		const tokenStyle = themeData.getTokenStyle(type, modifiers, 'typescript');
 		const expectedTokenStyle = expected[qualifiedClassifier];
 		assertTokenStyle(tokenStyle, expectedTokenStyle, qualifiedClassifier);
 
-		const tokenStyleMetaData = themeData.getTokenStyleMetadata(type, modifiers);
+		const tokenStyleMetaData = themeData.getTokenStyleMetadata(type, modifiers, 'typescript');
 		assertTokenStyleMetaData(colorIndex, tokenStyleMetaData, expectedTokenStyle);
 	}
 }

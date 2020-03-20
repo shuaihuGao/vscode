@@ -137,7 +137,7 @@ export class ColorThemeData implements IWorkbenchColorTheme {
 		return color;
 	}
 
-	public getTokenStyle(type: string, modifiers: string[], useDefault = true, definitions: TokenStyleDefinitions = {}): TokenStyle | undefined {
+	public getTokenStyle(type: string, modifiers: string[], defaultLanguageId: string, useDefault = true, definitions: TokenStyleDefinitions = {}): TokenStyle | undefined {
 		let result: any = {
 			foreground: undefined,
 			bold: undefined,
@@ -171,7 +171,7 @@ export class ColorThemeData implements IWorkbenchColorTheme {
 		}
 		if (this.tokenStylingRules === undefined) {
 			for (const rule of tokenClassificationRegistry.getTokenStylingDefaultRules()) {
-				const matchScore = rule.selector.match(type, modifiers);
+				const matchScore = rule.selector.match(type, modifiers, defaultLanguageId);
 				if (matchScore >= 0) {
 					let style: TokenStyle | undefined;
 					if (rule.defaults.scopesToProbe) {
@@ -182,7 +182,7 @@ export class ColorThemeData implements IWorkbenchColorTheme {
 					}
 					if (!style && useDefault !== false) {
 						const tokenStyleValue = rule.defaults[this.type];
-						style = this.resolveTokenStyleValue(tokenStyleValue);
+						style = this.resolveTokenStyleValue(tokenStyleValue, '');
 						if (style) {
 							_processStyle(matchScore, style, tokenStyleValue!);
 						}
@@ -191,14 +191,14 @@ export class ColorThemeData implements IWorkbenchColorTheme {
 			}
 		} else {
 			for (const rule of this.tokenStylingRules) {
-				const matchScore = rule.selector.match(type, modifiers);
+				const matchScore = rule.selector.match(type, modifiers, defaultLanguageId);
 				if (matchScore >= 0) {
 					_processStyle(matchScore, rule.style, rule);
 				}
 			}
 		}
 		for (const rule of this.customTokenStylingRules) {
-			const matchScore = rule.selector.match(type, modifiers);
+			const matchScore = rule.selector.match(type, modifiers, defaultLanguageId);
 			if (matchScore >= 0) {
 				_processStyle(matchScore, rule.style, rule);
 			}
@@ -210,12 +210,12 @@ export class ColorThemeData implements IWorkbenchColorTheme {
 	/**
 	 * @param tokenStyleValue Resolve a tokenStyleValue in the context of a theme
 	 */
-	private resolveTokenStyleValue(tokenStyleValue: TokenStyleValue | undefined): TokenStyle | undefined {
+	private resolveTokenStyleValue(tokenStyleValue: TokenStyleValue | undefined, defaultLanguageId: string): TokenStyle | undefined {
 		if (tokenStyleValue === undefined) {
 			return undefined;
 		} else if (typeof tokenStyleValue === 'string') {
 			const [type, ...modifiers] = tokenStyleValue.split('.');
-			return this.getTokenStyle(type, modifiers);
+			return this.getTokenStyle(type, modifiers, defaultLanguageId);
 		} else if (typeof tokenStyleValue === 'object') {
 			return tokenStyleValue;
 		}
@@ -252,8 +252,8 @@ export class ColorThemeData implements IWorkbenchColorTheme {
 		return this.getTokenColorIndex().asArray();
 	}
 
-	public getTokenStyleMetadata(type: string, modifiers: string[], useDefault = true, definitions: TokenStyleDefinitions = {}): ITokenStyle | undefined {
-		const style = this.getTokenStyle(type, modifiers, useDefault, definitions);
+	public getTokenStyleMetadata(type: string, modifiers: string[], defaultLanguage: string, useDefault = true, definitions: TokenStyleDefinitions = {}): ITokenStyle | undefined {
+		const style = this.getTokenStyle(type, modifiers, defaultLanguage, useDefault, definitions);
 		if (!style) {
 			return undefined;
 		}
